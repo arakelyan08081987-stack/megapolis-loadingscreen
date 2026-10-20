@@ -1,0 +1,512 @@
+/* ===================================================
+   Жизнь в Мегаполисе - DarkRP Loading Screen
+   Cinematic Cyber-Noir Theme & Ken Burns Engine
+   =================================================== */
+
+:root {
+    --primary-neon: #00f0ff;
+    --secondary-neon: #ff0077;
+    --accent-gold: #ffb700;
+    --dark-bg: #07090e;
+    --glass-bg: rgba(9, 14, 26, 0.75);
+    --glass-border: rgba(0, 240, 255, 0.22);
+    --text-main: #f0f4fc;
+    --text-muted: #8b9bb4;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--dark-bg);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    color: var(--text-main);
+}
+
+/* ===================================================
+   Background Slider & Ken Burns Animation
+   =================================================== */
+#slider-container {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    inset: -5%; /* Overhang allows room for panning without white borders */
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.4s;
+    transform: scale(1.0);
+    will-change: transform, opacity;
+}
+
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 4 distinct Ken Burns movement vectors for dynamic cinematic feel */
+.slide.active.slide-1 {
+    animation: kenBurns1 9s ease-out infinite alternate;
+}
+.slide.active.slide-2 {
+    animation: kenBurns2 9s ease-out infinite alternate;
+}
+.slide.active.slide-3 {
+    animation: kenBurns3 9s ease-out infinite alternate;
+}
+.slide.active.slide-4 {
+    animation: kenBurns4 9s ease-out infinite alternate;
+}
+
+@keyframes kenBurns1 {
+    0%   { transform: scale(1.02) translate(0, 0); }
+    100% { transform: scale(1.12) translate(-1.5%, -1%); }
+}
+
+@keyframes kenBurns2 {
+    0%   { transform: scale(1.12) translate(-1%, 1%); }
+    100% { transform: scale(1.02) translate(1.5%, -1%); }
+}
+
+@keyframes kenBurns3 {
+    0%   { transform: scale(1.03) translate(1%, 0); }
+    100% { transform: scale(1.14) translate(-1%, 1.5%); }
+}
+
+@keyframes kenBurns4 {
+    0%   { transform: scale(1.13) translate(0, 1%); }
+    100% { transform: scale(1.03) translate(0, -1%); }
+}
+
+/* Vignette and DarkRP Contrast Overlay */
+.vignette-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(7, 9, 14, 0.25) 0%, rgba(7, 9, 14, 0.88) 100%),
+                linear-gradient(to bottom, rgba(5, 7, 12, 0.85) 0%, transparent 25%, transparent 75%, rgba(5, 7, 12, 0.92) 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Subtle Sci-Fi Scanlines */
+.scanlines {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+    background-size: 100% 4px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* ===================================================
+   Canvas Particles Layer
+   =================================================== */
+#particles-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+    pointer-events: none;
+}
+
+/* ===================================================
+   UI Layout Layer
+   =================================================== */
+#ui-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem 4rem;
+}
+
+/* Reusable Glass Panel */
+.glass-panel {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55),
+                inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+/* ===================================================
+   Header: Server Branding & Audio
+   =================================================== */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.brand-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.neon-badge {
+    align-self: flex-start;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    color: var(--primary-neon);
+    border-radius: 4px;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+}
+
+.server-title {
+    font-size: 2.85rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #ffffff 20%, #c4f4ff 60%, var(--primary-neon) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 24px rgba(0, 240, 255, 0.4));
+    line-height: 1.1;
+}
+
+.server-tagline {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+/* Audio Widget */
+.audio-widget {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(10, 16, 28, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    padding: 0.5rem 0.9rem;
+    border-radius: 30px;
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--primary-neon);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.btn-icon:hover {
+    transform: scale(1.15);
+    color: #ffffff;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#volume-slider {
+    -webkit-appearance: none;
+    width: 80px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+    cursor: pointer;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-neon);
+    box-shadow: 0 0 8px var(--primary-neon);
+    cursor: pointer;
+}
+
+/* ===================================================
+   Center Content: Rules & Tips Carousel
+   =================================================== */
+.center-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    max-width: 520px;
+    padding: 1.6rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    position: relative;
+    border-left: 3px solid var(--accent-gold);
+    transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.card-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+}
+
+.card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.card-desc {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #c0cde0;
+    min-height: 3rem;
+}
+
+.slide-indicators {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.indicator {
+    width: 24px;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    transition: background 0.3s, width 0.3s;
+}
+
+.indicator.active {
+    width: 42px;
+    background: var(--primary-neon);
+    box-shadow: 0 0 8px var(--primary-neon);
+}
+
+/* Server Stats Box */
+.server-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 1.6rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+}
+
+.stat-val {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===================================================
+   Bottom Footer: Progress & Player
+   =================================================== */
+.bottom-footer {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+/* Player Card */
+.player-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+}
+
+.avatar-ring {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+#player-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #111;
+}
+
+.player-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    overflow: hidden;
+}
+
+.player-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-steamid {
+    font-size: 0.72rem;
+    font-family: 'Courier New', monospace;
+    color: var(--text-muted);
+}
+
+/* Progress Section */
+.progress-section {
+    padding: 1.1rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.progress-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.percentage-text {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--primary-neon);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    font-variant-numeric: tabular-nums;
+}
+
+.progress-track {
+    position: relative;
+    width: 100%;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.progress-bar {
+    position: relative;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #0077ff, var(--primary-neon));
+    border-radius: 6px;
+    transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.progress-glow {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background: #ffffff;
+    filter: blur(6px);
+    opacity: 0.8;
+}
+
+.progress-stripes {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.18) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.18) 50%,
+        rgba(255, 255, 255, 0.18) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 24px 24px;
+    animation: moveStripes 1.5s linear infinite;
+}
+
+@keyframes moveStripes {
+    0%   { background-position: 0 0; }
+    100% { background-position: 24px 0; }
+}
+
+.file-text {
+    font-size: 0.78rem;
+    font-family: 'Courier New', Consolas, monospace;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ===================================================
+   Responsive Breakpoints
+   =================================================== */
+@media (max-width: 1200px) {
+    #ui-container { padding: 2rem 2.5rem; }
+    .server-title { font-size: 2.2rem; }
+    .bottom-footer { grid-template-columns: 240px 1fr; }
+}
+
+@media (max-width: 800px) {
+    #ui-container { padding: 1.5rem; }
+    .center-content { flex-direction: column; align-items: stretch; gap: 1rem; }
+    .bottom-footer { grid-template-columns: 1fr; gap: 1rem; }
+    .player-card { display: none; }
+}
